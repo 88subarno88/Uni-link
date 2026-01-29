@@ -8,9 +8,9 @@ export const config = createConfig({
     injected(),
   ],
   transports: {
-    [sepolia.id]: http(),
-    [polygonAmoy.id]: http(),
-    [arbitrumSepolia.id]: http(),
-    [baseSepolia.id]: http(),
+    [sepolia.id]: http('https://rpc.sepolia.org'),
+    [polygonAmoy.id]: http('https://rpc-amoy.polygon.technology'),
+    [arbitrumSepolia.id]: http('https://sepolia-rollup.arbitrum.io/rpc'),
+    [baseSepolia.id]: http('https://sepolia.base.org'),
   },
 })

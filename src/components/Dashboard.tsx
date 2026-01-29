@@ -82,7 +82,32 @@ export default function Dashboard() {
 
             {chain.data.isLoading ? (
               <div style={{textAlign: 'center', padding: '20px', color: '#999'}}>
-                <p>Loading...</p>
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  border: '4px solid #f3f4f6',
+                  borderTop: '4px solid #667eea',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                  margin: '0 auto 10px'
+                }}></div>
+                <p style={{fontSize: '14px'}}>Loading...</p>
+              </div>
+            ) : chain.data.error ? (
+              <div style={{textAlign: 'center', padding: '20px'}}>
+                <p style={{color: '#ef4444', fontSize: '14px', marginBottom: '10px'}}>⚠️ Error loading</p>
+                <p style={{color: '#999', fontSize: '12px'}}>RPC might be down</p>
+                <div style={{
+                  background: '#fef2f2',
+                  border: '1px solid #fecaca',
+                  borderRadius: '8px',
+                  padding: '10px',
+                  marginTop: '10px'
+                }}>
+                  <p style={{fontSize: '12px', color: '#991b1b', margin: 0}}>
+                    Showing 0.0000 ETH
+                  </p>
+                </div>
               </div>
             ) : chain.data.data ? (
               <>
@@ -116,6 +141,13 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
+
+      <style>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   )
 }
