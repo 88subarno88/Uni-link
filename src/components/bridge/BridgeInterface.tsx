@@ -4,6 +4,59 @@ import { sepolia, polygonAmoy, arbitrumSepolia } from 'wagmi/chains'
 import { BridgeService } from '../../services/bridgeService'
 import TransactionStatus from '../transaction/TransactionStatus'
 
+// Warning Banner Component
+function BridgeWarning() {
+  return (
+    <div style={{
+      background: '#fef3c7',
+      border: '2px solid #f59e0b',
+      borderRadius: '12px',
+      padding: '20px',
+      marginBottom: '30px',
+      maxWidth: '600px',
+      margin: '0 auto 30px auto'
+    }}>
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'flex-start', 
+        gap: '12px' 
+      }}>
+        <span style={{ fontSize: '28px', flexShrink: 0 }}>⚠️</span>
+        <div>
+          <h4 style={{ 
+            margin: '0 0 10px 0', 
+            color: '#92400e',
+            fontSize: '16px',
+            fontWeight: 'bold'
+          }}>
+            Demo Mode - Testnet Simulation
+          </h4>
+          <p style={{ 
+            margin: '0 0 8px 0', 
+            fontSize: '14px', 
+            color: '#78350f',
+            lineHeight: '1.5'
+          }}>
+            This bridge demonstrates the user experience and transaction flow. 
+            Currently, transactions are executed on the source chain only.
+          </p>
+          <p style={{ 
+            margin: 0, 
+            fontSize: '13px', 
+            color: '#78350f',
+            fontStyle: 'italic',
+            lineHeight: '1.4'
+          }}>
+            <strong>For HackMoney demo:</strong> Your Sepolia balance will decrease, 
+            but assets won't appear on the destination chain. Real cross-chain 
+            bridging requires deployed bridge contracts (LayerZero/Axelar) on both chains.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function BridgeInterface() {
   const { address, chain } = useAccount()
   const { switchChain } = useSwitchChain()
@@ -108,6 +161,10 @@ export default function BridgeInterface() {
 
   return (
     <>
+      {/* Warning Banner */}
+      <BridgeWarning />
+
+      {/* Main Bridge Card */}
       <div style={{
         background: 'white',
         borderRadius: '20px',
@@ -248,7 +305,7 @@ export default function BridgeInterface() {
             marginBottom: '20px'
           }}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px'}}>
-              <span style={{color: '#1e40af', fontSize: '14px'}}>You'll receive:</span>
+              <span style={{color: '#1e40af', fontSize: '14px'}}>You'll receive (Demo):</span>
               <span style={{color: '#1e40af', fontSize: '18px', fontWeight: 'bold'}}>
                 ~{estimatedReceive} ETH
               </span>
@@ -286,7 +343,7 @@ export default function BridgeInterface() {
             transition: 'all 0.2s'
           }}
         >
-          {isProcessing ? '⏳ Processing...' : '🌉 Bridge Now'}
+          {isProcessing ? '⏳ Processing...' : '🌉 Bridge Now (Demo)'}
         </button>
 
         {/* Info */}
@@ -303,6 +360,21 @@ export default function BridgeInterface() {
           <p style={{margin: '5px 0 0 0'}}>
             Fast state channel transfers with minimal fees. Bridge completes in ~30 seconds!
           </p>
+        </div>
+
+        {/* Technical Note */}
+        <div style={{
+          marginTop: '15px',
+          padding: '12px',
+          background: '#f3f4f6',
+          borderRadius: '8px',
+          fontSize: '11px',
+          color: '#6b7280',
+          borderLeft: '3px solid #9ca3af'
+        }}>
+          <strong>🔧 Technical Note:</strong> This demo executes transactions on the source chain. 
+          Production implementation will integrate LayerZero OFT (Omnichain Fungible Token) 
+          standard for true cross-chain asset transfer.
         </div>
       </div>
 

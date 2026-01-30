@@ -1,3 +1,4 @@
+import SuiCard from './SuiCard'
 import { useMultiChainBalance } from '../hooks/useMultiChainBalance'
 import { useAccount, useDisconnect } from 'wagmi'
 
@@ -21,7 +22,6 @@ export default function Dashboard() {
   }, 0)
 
   const handleRefresh = () => {
-    // Manually refetch all balances
     balances.ethereum.refetch()
     balances.polygon.refetch()
     balances.arbitrum.refetch()
@@ -97,8 +97,9 @@ export default function Dashboard() {
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-        gap: '20px'
+        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+        gap: '20px',
+        marginBottom: '20px'
       }}>
         {chains.map((chain) => (
           <div
@@ -106,35 +107,28 @@ export default function Dashboard() {
             style={{
               background: 'white',
               borderRadius: '20px',
-              padding: '25px',
-              boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
-              transition: 'transform 0.2s'
+              padding: '30px',
+              boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
+              border: `3px solid ${chain.color}`
             }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-              <div style={{ fontSize: '32px' }}>{chain.emoji}</div>
-              <div>
-                <div style={{ fontWeight: 'bold', fontSize: '18px' }}>{chain.name}</div>
-                <div style={{ fontSize: '12px', color: '#999' }}>Testnet</div>
-              </div>
-            </div>
-
+            <div style={{ fontSize: '40px', marginBottom: '15px' }}>{chain.emoji}</div>
+            <h3 style={{ margin: '0 0 20px 0', fontSize: '20px', color: '#333' }}>{chain.name}</h3>
+            
             {chain.data.isLoading ? (
-              <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                <div style={{ fontSize: '24px' }}>⏳</div>
-                <div style={{ color: '#666', marginTop: '10px' }}>Loading...</div>
+              <div style={{ padding: '20px', textAlign: 'center', color: '#9ca3af' }}>
+                Loading...
               </div>
-            ) : chain.data.error ? (
+            ) : chain.data.isError ? (
               <div>
-                <div style={{ 
-                  background: '#fef2f2', 
-                  padding: '15px', 
-                  borderRadius: '10px',
-                  marginBottom: '10px'
+                <div style={{
+                  padding: '15px',
+                  background: '#fee2e2',
+                  borderRadius: '8px',
+                  marginBottom: '10px',
+                  textAlign: 'center'
                 }}>
-                  <div style={{ color: '#ef4444', fontWeight: 'bold', marginBottom: '5px' }}>
+                  <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#991b1b' }}>
                     ⚠️ Error loading
                   </div>
                   <div style={{ fontSize: '12px', color: '#991b1b' }}>
@@ -181,6 +175,11 @@ export default function Dashboard() {
             )}
           </div>
         ))}
+      </div>
+
+      {/* Sui Card - New Addition! */}
+      <div style={{ marginTop: '20px' }}>
+        <SuiCard />
       </div>
     </div>
   )
