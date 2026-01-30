@@ -10,7 +10,6 @@ export default function Dashboard() {
     { name: 'Sepolia', emoji: '🔷', color: '#627EEA', data: balances.ethereum },
     { name: 'Polygon Amoy', emoji: '🟣', color: '#8247E5', data: balances.polygon },
     { name: 'Arbitrum Sepolia', emoji: '🔵', color: '#28A0F0', data: balances.arbitrum },
-    { name: 'Base Sepolia', emoji: '🔷', color: '#0052FF', data: balances.base },
   ]
 
   const totalValue = chains.reduce((sum, chain) => {
@@ -21,18 +20,50 @@ export default function Dashboard() {
     return sum
   }, 0)
 
+  const handleRefresh = () => {
+    // Manually refetch all balances
+    balances.ethereum.refetch()
+    balances.polygon.refetch()
+    balances.arbitrum.refetch()
+  }
+
   return (
     <div>
-      {/* Header */}
-      <div style={{background: 'white', borderRadius: '20px', padding: '30px', marginBottom: '30px', boxShadow: '0 10px 40px rgba(0,0,0,0.1)'}}>
-        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px'}}>
+      <div style={{
+        background: 'white',
+        borderRadius: '20px',
+        padding: '30px',
+        marginBottom: '20px',
+        boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <div style={{ fontSize: '40px' }}>🌉</div>
           <div>
-            <h1 style={{fontSize: '2.5em', marginBottom: '10px'}}>🌉 Uni-Chain</h1>
-            <p style={{color: '#666', fontSize: '14px', wordBreak: 'break-all'}}>
+            <h1 style={{ margin: 0, fontSize: '24px' }}>Uni-Chain</h1>
+            <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
               {address?.slice(0, 6)}...{address?.slice(-4)}
             </p>
           </div>
-          <button 
+        </div>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            onClick={handleRefresh}
+            style={{
+              background: '#667eea',
+              color: 'white',
+              border: 'none',
+              padding: '12px 24px',
+              borderRadius: '10px',
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            🔄 Refresh
+          </button>
+          <button
             onClick={() => disconnect()}
             style={{
               background: '#ef4444',
@@ -49,105 +80,108 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Total Portfolio */}
-      <div style={{background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: '20px', padding: '40px', marginBottom: '30px', color: 'white', textAlign: 'center', boxShadow: '0 10px 40px rgba(0,0,0,0.2)'}}>
-        <p style={{fontSize: '16px', opacity: 0.9, marginBottom: '10px'}}>Total Portfolio Value</p>
-        <h2 style={{fontSize: '3.5em', fontWeight: 'bold'}}>{totalValue.toFixed(4)} ETH</h2>
-        <p style={{fontSize: '14px', opacity: 0.8, marginTop: '10px'}}>Across 4 testnets</p>
+      <div style={{
+        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        borderRadius: '20px',
+        padding: '40px',
+        marginBottom: '30px',
+        color: 'white',
+        textAlign: 'center'
+      }}>
+        <div style={{ fontSize: '16px', opacity: 0.9, marginBottom: '10px' }}>Total Portfolio Value</div>
+        <div style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '5px' }}>
+          {totalValue.toFixed(4)} ETH
+        </div>
+        <div style={{ fontSize: '14px', opacity: 0.8 }}>Across 3 testnets</div>
       </div>
 
-      {/* Chain Balances Grid */}
-      <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px'}}>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+        gap: '20px'
+      }}>
         {chains.map((chain) => (
-          <div 
+          <div
             key={chain.name}
             style={{
               background: 'white',
               borderRadius: '20px',
-              padding: '30px',
-              boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
-              transition: 'transform 0.2s',
-              cursor: 'pointer'
+              padding: '25px',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+              transition: 'transform 0.2s'
             }}
             onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
             onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
           >
-            <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px'}}>
-              <div style={{fontSize: '2.5em', marginRight: '15px'}}>{chain.emoji}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ fontSize: '32px' }}>{chain.emoji}</div>
               <div>
-                <h3 style={{fontSize: '1.4em', margin: 0, color: chain.color}}>{chain.name}</h3>
-                <p style={{fontSize: '12px', color: '#999', margin: 0}}>Testnet</p>
+                <div style={{ fontWeight: 'bold', fontSize: '18px' }}>{chain.name}</div>
+                <div style={{ fontSize: '12px', color: '#999' }}>Testnet</div>
               </div>
             </div>
 
             {chain.data.isLoading ? (
-              <div style={{textAlign: 'center', padding: '20px', color: '#999'}}>
-                <div style={{
-                  width: '40px',
-                  height: '40px',
-                  border: '4px solid #f3f4f6',
-                  borderTop: '4px solid #667eea',
-                  borderRadius: '50%',
-                  animation: 'spin 1s linear infinite',
-                  margin: '0 auto 10px'
-                }}></div>
-                <p style={{fontSize: '14px'}}>Loading...</p>
+              <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                <div style={{ fontSize: '24px' }}>⏳</div>
+                <div style={{ color: '#666', marginTop: '10px' }}>Loading...</div>
               </div>
             ) : chain.data.error ? (
-              <div style={{textAlign: 'center', padding: '20px'}}>
-                <p style={{color: '#ef4444', fontSize: '14px', marginBottom: '10px'}}>⚠️ Error loading</p>
-                <p style={{color: '#999', fontSize: '12px'}}>RPC might be down</p>
-                <div style={{
-                  background: '#fef2f2',
-                  border: '1px solid #fecaca',
-                  borderRadius: '8px',
-                  padding: '10px',
-                  marginTop: '10px'
+              <div>
+                <div style={{ 
+                  background: '#fef2f2', 
+                  padding: '15px', 
+                  borderRadius: '10px',
+                  marginBottom: '10px'
                 }}>
-                  <p style={{fontSize: '12px', color: '#991b1b', margin: 0}}>
-                    Showing 0.0000 ETH
-                  </p>
+                  <div style={{ color: '#ef4444', fontWeight: 'bold', marginBottom: '5px' }}>
+                    ⚠️ Error loading
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#991b1b' }}>
+                    RPC issue - Click refresh
+                  </div>
+                </div>
+                <div style={{
+                  padding: '10px',
+                  background: '#f3f4f6',
+                  borderRadius: '8px',
+                  textAlign: 'center'
+                }}>
+                  <div style={{ fontSize: '12px', color: '#6b7280' }}>Showing</div>
+                  <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#374151' }}>0.0000 ETH</div>
                 </div>
               </div>
             ) : chain.data.data ? (
               <>
-                <div style={{marginBottom: '15px'}}>
-                  <p style={{fontSize: '12px', color: '#999', marginBottom: '5px'}}>Balance</p>
-                  <p style={{fontSize: '1.8em', fontWeight: 'bold', color: '#333'}}>
+                <div style={{ marginBottom: '10px' }}>
+                  <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '5px' }}>Balance</div>
+                  <div style={{ fontSize: '28px', fontWeight: 'bold', color: chain.color }}>
                     {parseFloat(chain.data.data.formatted || '0').toFixed(4)}
-                  </p>
-                  <p style={{fontSize: '14px', color: '#666'}}>
+                  </div>
+                  <div style={{ fontSize: '14px', color: '#9ca3af' }}>
                     {chain.data.data.symbol}
-                  </p>
+                  </div>
                 </div>
-                
                 <div style={{
-                  background: '#f0fdf4',
-                  border: '1px solid #86efac',
+                  background: '#ecfdf5',
+                  padding: '8px 12px',
                   borderRadius: '8px',
-                  padding: '10px',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  fontSize: '12px',
+                  color: '#059669',
+                  fontWeight: 'bold'
                 }}>
-                  <p style={{fontSize: '12px', color: '#15803d', margin: 0}}>
-                    ✅ Connected
-                  </p>
+                  ✅ Connected
                 </div>
               </>
             ) : (
-              <div style={{textAlign: 'center', padding: '20px'}}>
-                <p style={{color: '#999', fontSize: '14px'}}>0.0000 ETH</p>
+              <div style={{ padding: '15px', background: '#f3f4f6', borderRadius: '8px', textAlign: 'center' }}>
+                <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#6b7280' }}>0.0000 ETH</div>
               </div>
             )}
           </div>
         ))}
       </div>
-
-      <style>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
   )
 }

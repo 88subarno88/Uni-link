@@ -13,7 +13,6 @@ export interface BridgeTransaction {
 
 export class BridgeService {
   // Simulate bridge by sending ETH to the same address on destination chain
-  // In production, this would interact with Yellow Network or LI.FI
   static async executeBridge(
     fromChainId: number,
     toChainId: number,
@@ -21,20 +20,20 @@ export class BridgeService {
     toAddress: string
   ): Promise<BridgeTransaction> {
     try {
-      // Step 1: Send transaction on source chain
+      // Send transaction on source chain
       const hash = await sendTransaction(config, {
         to: toAddress as `0x${string}`,
         value: parseEther(amount),
         chainId: fromChainId,
       })
 
-      // Step 2: Wait for confirmation
+      // Wait for confirmation
       const receipt = await waitForTransactionReceipt(config, {
         hash,
         chainId: fromChainId,
       })
 
-      // Step 3: Return transaction info
+      // Return transaction info
       return {
         hash,
         status: receipt.status === 'success' ? 'success' : 'failed',
@@ -59,7 +58,6 @@ export class BridgeService {
   static saveToHistory(tx: BridgeTransaction) {
     const history = this.getHistory()
     history.unshift(tx)
-    // Keep only last 20 transactions
     localStorage.setItem('bridge_history', JSON.stringify(history.slice(0, 20)))
   }
 }

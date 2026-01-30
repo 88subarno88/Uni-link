@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAccount, useSwitchChain } from 'wagmi'
-import { sepolia, polygonAmoy, arbitrumSepolia, baseSepolia } from 'wagmi/chains'
+import { sepolia, polygonAmoy, arbitrumSepolia } from 'wagmi/chains'
 import { BridgeService } from '../../services/bridgeService'
 import TransactionStatus from '../transaction/TransactionStatus'
 
@@ -25,7 +25,6 @@ export default function BridgeInterface() {
     { id: sepolia.id, name: 'Sepolia', emoji: '🔷', color: '#627EEA', explorer: 'https://sepolia.etherscan.io' },
     { id: polygonAmoy.id, name: 'Polygon Amoy', emoji: '🟣', color: '#8247E5', explorer: 'https://amoy.polygonscan.com' },
     { id: arbitrumSepolia.id, name: 'Arbitrum Sepolia', emoji: '🔵', color: '#28A0F0', explorer: 'https://sepolia.arbiscan.io' },
-    { id: baseSepolia.id, name: 'Base Sepolia', emoji: '🔷', color: '#0052FF', explorer: 'https://sepolia.basescan.org' },
   ]
 
   const handleBridge = async () => {
@@ -39,7 +38,6 @@ export default function BridgeInterface() {
       return
     }
 
-    // Check if we need to switch chains
     if (chain?.id !== fromChain) {
       try {
         await switchChain({ chainId: fromChain })
@@ -54,7 +52,6 @@ export default function BridgeInterface() {
     const toChainInfo = chains.find(c => c.id === toChain)
 
     try {
-      // Show pending status
       setTxStatus({
         hash: '',
         status: 'pending',
@@ -63,7 +60,6 @@ export default function BridgeInterface() {
         amount: amount
       })
 
-      // Execute bridge transaction
       const tx = await BridgeService.executeBridge(
         fromChain,
         toChain,
@@ -71,7 +67,6 @@ export default function BridgeInterface() {
         address
       )
 
-      // Update with success
       setTxStatus({
         hash: tx.hash,
         status: tx.status,
@@ -81,10 +76,8 @@ export default function BridgeInterface() {
         explorerUrl: `${fromChainInfo?.explorer}/tx/${tx.hash}`
       })
 
-      // Save to history
       BridgeService.saveToHistory(tx)
 
-      // Clear form on success
       if (tx.status === 'success') {
         setTimeout(() => {
           setAmount('')
