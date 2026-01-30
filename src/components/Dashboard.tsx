@@ -1,6 +1,7 @@
-import SuiCard from './SuiCard'
 import { useMultiChainBalance } from '../hooks/useMultiChainBalance'
 import { useAccount, useDisconnect } from 'wagmi'
+import SuiCard from './SuiCard'
+import ENSName from './ENSName'
 
 export default function Dashboard() {
   const { address } = useAccount()
@@ -44,7 +45,7 @@ export default function Dashboard() {
           <div>
             <h1 style={{ margin: 0, fontSize: '24px' }}>Uni-Chain</h1>
             <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
-              {address?.slice(0, 6)}...{address?.slice(-4)}
+              <ENSName address={address} />
             </p>
           </div>
         </div>
@@ -177,7 +178,6 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Sui Card - New Addition! */}
       <div style={{ marginTop: '20px' }}>
         <SuiCard />
       </div>
