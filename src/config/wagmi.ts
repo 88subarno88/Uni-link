@@ -1,18 +1,19 @@
 import { http, createConfig } from 'wagmi'
 import { sepolia, polygonAmoy, arbitrumSepolia } from 'wagmi/chains'
-import { injected } from 'wagmi/connectors'
+import { coinbaseWallet, injected, walletConnect } from 'wagmi/connectors'
+
+const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || 'demo'
 
 export const config = createConfig({
   chains: [sepolia, polygonAmoy, arbitrumSepolia],
   connectors: [
     injected(),
+    coinbaseWallet({ appName: 'Uni-Chain' }),
+    walletConnect({ projectId }),
   ],
   transports: {
-    // Use multiple fallback RPCs for better reliability
-    [sepolia.id]: http('https://ethereum-sepolia-rpc.publicnode.com'),
-    [polygonAmoy.id]: http('https://rpc-amoy.polygon.technology'),
-    [arbitrumSepolia.id]: http('https://sepolia-rollup.arbitrum.io/rpc'),
+    [sepolia.id]: http(),
+    [polygonAmoy.id]: http(),
+    [arbitrumSepolia.id]: http(),
   },
-  // Enable multi-chain queries
-  multiInjectedProviderDiscovery: false,
 })

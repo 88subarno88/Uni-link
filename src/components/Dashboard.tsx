@@ -15,8 +15,13 @@ export default function Dashboard() {
   ]
 
   const totalValue = chains.reduce((sum, chain) => {
-    if (chain.data.data) {
-      const value = parseFloat(chain.data.data.formatted)
+    const data = chain.data.data
+    if (data && typeof data === 'object' && 'formatted' in data) {
+      const value = parseFloat(data.formatted)
+      return sum + (isNaN(value) ? 0 : value)
+    }
+    if (typeof data === 'string') {
+      const value = parseFloat(data)
       return sum + (isNaN(value) ? 0 : value)
     }
     return sum
@@ -93,7 +98,7 @@ export default function Dashboard() {
         <div style={{ fontSize: '48px', fontWeight: 'bold', marginBottom: '5px' }}>
           {totalValue.toFixed(4)} ETH
         </div>
-        <div style={{ fontSize: '14px', opacity: 0.8 }}>Across 3 testnets</div>
+        <div style={{ fontSize: '14px', opacity: 0.8 }}>Across 3 EVM Testnets + Sui</div>
       </div>
 
       <div style={{
@@ -102,80 +107,82 @@ export default function Dashboard() {
         gap: '20px',
         marginBottom: '20px'
       }}>
-        {chains.map((chain) => (
-          <div
-            key={chain.name}
-            style={{
-              background: 'white',
-              borderRadius: '20px',
-              padding: '30px',
-              boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
-              border: `3px solid ${chain.color}`
-            }}
-          >
-            <div style={{ fontSize: '40px', marginBottom: '15px' }}>{chain.emoji}</div>
-            <h3 style={{ margin: '0 0 20px 0', fontSize: '20px', color: '#333' }}>{chain.name}</h3>
-            
-            {chain.data.isLoading ? (
-              <div style={{ padding: '20px', textAlign: 'center', color: '#9ca3af' }}>
-                Loading...
-              </div>
-            ) : chain.data.isError ? (
-              <div>
-                <div style={{
-                  padding: '15px',
-                  background: '#fee2e2',
-                  borderRadius: '8px',
-                  marginBottom: '10px',
-                  textAlign: 'center'
-                }}>
-                  <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#991b1b' }}>
-                    ⚠️ Error loading
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#991b1b' }}>
-                    RPC issue - Click refresh
-                  </div>
+        {chains.map((chain) => {
+          const chainData = chain.data.data
+          const balance = typeof chainData === 'string' ? chainData : chainData?.formatted || '0'
+          const symbol = typeof chainData === 'string' ? 'ETH' : chainData?.symbol || 'ETH'
+          
+          return (
+            <div
+              key={chain.name}
+              style={{
+                background: 'white',
+                borderRadius: '20px',
+                padding: '30px',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.1)',
+                border: `3px solid ${chain.color}`
+              }}
+            >
+              <div style={{ fontSize: '40px', marginBottom: '15px' }}>{chain.emoji}</div>
+              <h3 style={{ margin: '0 0 20px 0', fontSize: '20px', color: '#333' }}>{chain.name}</h3>
+              
+              {chain.data.isLoading ? (
+                <div style={{ padding: '20px', textAlign: 'center', color: '#9ca3af' }}>
+                  Loading...
                 </div>
-                <div style={{
-                  padding: '10px',
-                  background: '#f3f4f6',
-                  borderRadius: '8px',
-                  textAlign: 'center'
-                }}>
-                  <div style={{ fontSize: '12px', color: '#6b7280' }}>Showing</div>
-                  <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#374151' }}>0.0000 ETH</div>
-                </div>
-              </div>
-            ) : chain.data.data ? (
-              <>
-                <div style={{ marginBottom: '10px' }}>
-                  <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '5px' }}>Balance</div>
-                  <div style={{ fontSize: '28px', fontWeight: 'bold', color: chain.color }}>
-                    {parseFloat(chain.data.data.formatted || '0').toFixed(4)}
+              ) : chain.data.isError ? (
+                <div>
+                  <div style={{
+                    padding: '15px',
+                    background: '#fee2e2',
+                    borderRadius: '8px',
+                    marginBottom: '10px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#991b1b' }}>
+                      ⚠️ Error loading
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#991b1b' }}>
+                      RPC issue - Click refresh
+                    </div>
                   </div>
-                  <div style={{ fontSize: '14px', color: '#9ca3af' }}>
-                    {chain.data.data.symbol}
+                  <div style={{
+                    padding: '10px',
+                    background: '#f3f4f6',
+                    borderRadius: '8px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ fontSize: '12px', color: '#6b7280' }}>Showing</div>
+                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#374151' }}>0.0000 {symbol}</div>
                   </div>
                 </div>
-                <div style={{
-                  background: '#ecfdf5',
-                  padding: '8px 12px',
-                  borderRadius: '8px',
-                  textAlign: 'center',
-                  fontSize: '12px',
-                  color: '#059669',
-                  fontWeight: 'bold'
-                }}>
-                  ✅ Connected
-                </div>
-              </>
-            ) : (
-              <div style={{ padding: '15px', background: '#f3f4f6', borderRadius: '8px', textAlign: 'center' }}>
-                <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#6b7280' }}>0.0000 ETH</div>
-              </div>
-            )}
-          </div>
-        ))}
+              ) : (
+                <>
+                  <div style={{ marginBottom: '10px' }}>
+                    <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '5px' }}>Balance</div>
+                    <div style={{ fontSize: '28px', fontWeight: 'bold', color: chain.color }}>
+                      {parseFloat(balance || '0').toFixed(4)}
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#9ca3af' }}>
+                      {symbol}
+                    </div>
+                  </div>
+                  <div style={{
+                    background: '#ecfdf5',
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    textAlign: 'center',
+                    fontSize: '12px',
+                    color: '#059669',
+                    fontWeight: 'bold'
+                  }}>
+                    ✅ Connected
+                  </div>
+                </>
+              )}
+            </div>
+          )
+        })}
       </div>
 
       <div style={{ marginTop: '20px' }}>

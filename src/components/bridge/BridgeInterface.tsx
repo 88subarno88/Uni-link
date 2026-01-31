@@ -4,59 +4,6 @@ import { sepolia, polygonAmoy, arbitrumSepolia } from 'wagmi/chains'
 import { BridgeService } from '../../services/bridgeService'
 import TransactionStatus from '../transaction/TransactionStatus'
 
-// Warning Banner Component
-function BridgeWarning() {
-  return (
-    <div style={{
-      background: '#fef3c7',
-      border: '2px solid #f59e0b',
-      borderRadius: '12px',
-      padding: '20px',
-      marginBottom: '30px',
-      maxWidth: '600px',
-      margin: '0 auto 30px auto'
-    }}>
-      <div style={{ 
-        display: 'flex', 
-        alignItems: 'flex-start', 
-        gap: '12px' 
-      }}>
-        <span style={{ fontSize: '28px', flexShrink: 0 }}>⚠️</span>
-        <div>
-          <h4 style={{ 
-            margin: '0 0 10px 0', 
-            color: '#92400e',
-            fontSize: '16px',
-            fontWeight: 'bold'
-          }}>
-            Demo Mode - Testnet Simulation
-          </h4>
-          <p style={{ 
-            margin: '0 0 8px 0', 
-            fontSize: '14px', 
-            color: '#78350f',
-            lineHeight: '1.5'
-          }}>
-            This bridge demonstrates the user experience and transaction flow. 
-            Currently, transactions are executed on the source chain only.
-          </p>
-          <p style={{ 
-            margin: 0, 
-            fontSize: '13px', 
-            color: '#78350f',
-            fontStyle: 'italic',
-            lineHeight: '1.4'
-          }}>
-            <strong>For HackMoney demo:</strong> Your Sepolia balance will decrease, 
-            but assets won't appear on the destination chain. Real cross-chain 
-            bridging requires deployed bridge contracts (LayerZero/Axelar) on both chains.
-          </p>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 export default function BridgeInterface() {
   const { address, chain } = useAccount()
   const { switchChain } = useSwitchChain()
@@ -161,10 +108,35 @@ export default function BridgeInterface() {
 
   return (
     <>
-      {/* Warning Banner */}
-      <BridgeWarning />
+      {/* Demo Mode Warning */}
+      <div style={{
+        background: '#fef3c7',
+        border: '2px solid #f59e0b',
+        borderRadius: '12px',
+        padding: '20px',
+        marginBottom: '30px',
+        maxWidth: '600px',
+        margin: '0 auto 30px auto'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+          <span style={{ fontSize: '28px', flexShrink: 0 }}>⚠️</span>
+          <div>
+            <h4 style={{ margin: '0 0 10px 0', color: '#92400e', fontSize: '16px', fontWeight: 'bold' }}>
+              Demo Mode - Testnet Simulation
+            </h4>
+            <p style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#78350f', lineHeight: '1.5' }}>
+              This bridge demonstrates the user experience and transaction flow. 
+              Currently, transactions are executed on the source chain only.
+            </p>
+            <p style={{ margin: 0, fontSize: '13px', color: '#78350f', fontStyle: 'italic', lineHeight: '1.4' }}>
+              <strong>For HackMoney demo:</strong> Your Sepolia balance will decrease, 
+              but assets won't appear on the destination chain. Real cross-chain 
+              bridging requires deployed bridge contracts (LayerZero/Axelar) on both chains.
+            </p>
+          </div>
+        </div>
+      </div>
 
-      {/* Main Bridge Card */}
       <div style={{
         background: 'white',
         borderRadius: '20px',
@@ -177,7 +149,6 @@ export default function BridgeInterface() {
           🌉 Bridge Assets
         </h2>
 
-        {/* From Chain */}
         <div style={{marginBottom: '20px'}}>
           <label style={{display: 'block', marginBottom: '10px', color: '#666', fontSize: '14px', fontWeight: 'bold'}}>
             From
@@ -204,7 +175,6 @@ export default function BridgeInterface() {
           </select>
         </div>
 
-        {/* Amount Input */}
         <div style={{marginBottom: '20px'}}>
           <label style={{display: 'block', marginBottom: '10px', color: '#666', fontSize: '14px', fontWeight: 'bold'}}>
             Amount
@@ -238,7 +208,6 @@ export default function BridgeInterface() {
           </div>
         </div>
 
-        {/* Swap Button */}
         <div style={{textAlign: 'center', margin: '20px 0'}}>
           <button
             onClick={swapChains}
@@ -268,7 +237,6 @@ export default function BridgeInterface() {
           </button>
         </div>
 
-        {/* To Chain */}
         <div style={{marginBottom: '30px'}}>
           <label style={{display: 'block', marginBottom: '10px', color: '#666', fontSize: '14px', fontWeight: 'bold'}}>
             To
@@ -295,7 +263,6 @@ export default function BridgeInterface() {
           </select>
         </div>
 
-        {/* Estimated Receive */}
         {amount && parseFloat(amount) > 0 && (
           <div style={{
             background: '#f0f9ff',
@@ -323,7 +290,6 @@ export default function BridgeInterface() {
           </div>
         )}
 
-        {/* Bridge Button */}
         <button
           onClick={handleBridge}
           disabled={!amount || parseFloat(amount) <= 0 || isProcessing}
@@ -346,39 +312,23 @@ export default function BridgeInterface() {
           {isProcessing ? '⏳ Processing...' : '🌉 Bridge Now (Demo)'}
         </button>
 
-        {/* Info */}
         <div style={{
           marginTop: '20px',
           padding: '15px',
-          background: '#fef3c7',
-          border: '1px solid #fde68a',
+          background: '#f3f4f6',
           borderRadius: '10px',
           fontSize: '12px',
-          color: '#92400e'
+          color: '#4b5563'
         }}>
-          <strong>⚡ Powered by Yellow Network</strong>
+          <strong>🔧 Technical Note:</strong>
           <p style={{margin: '5px 0 0 0'}}>
-            Fast state channel transfers with minimal fees. Bridge completes in ~30 seconds!
+            This demo executes transactions on the source chain. Production implementation 
+            will integrate LayerZero OFT (Omnichain Fungible Token) standard for true 
+            cross-chain asset transfer.
           </p>
-        </div>
-
-        {/* Technical Note */}
-        <div style={{
-          marginTop: '15px',
-          padding: '12px',
-          background: '#f3f4f6',
-          borderRadius: '8px',
-          fontSize: '11px',
-          color: '#6b7280',
-          borderLeft: '3px solid #9ca3af'
-        }}>
-          <strong>🔧 Technical Note:</strong> This demo executes transactions on the source chain. 
-          Production implementation will integrate LayerZero OFT (Omnichain Fungible Token) 
-          standard for true cross-chain asset transfer.
         </div>
       </div>
 
-      {/* Transaction Status Modal */}
       {txStatus && (
         <TransactionStatus
           hash={txStatus.hash}
